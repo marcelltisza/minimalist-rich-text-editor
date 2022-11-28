@@ -1,0 +1,29 @@
+.editor-container {
+    border-width: 2px;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: #ddd;
+    min-height: 400PX;
+    padding: 20px;
+    background-color: white;
+}
+
+.editor {
+    border-width: 1px 0 0 0;
+    border-style: solid;
+    border-color: #ddd;
+    padding-top: 5px;
+    margin-top: 5px;
+    position: relative;
+}
+
+.button {
+    border-width: 0;
+    border-radius: 1px;
+    width: 25px;
+    background-color: white;
+    margin-right: 5px;
+    margin-top: 5px;
+    padding: 4px 3px;
+}
+

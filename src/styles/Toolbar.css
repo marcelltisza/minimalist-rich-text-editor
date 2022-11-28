@@ -1,0 +1,13 @@
+.toolbar {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.toolbar-group {
+    margin-right: 30px;
+}
+
+.save {
+    margin-left: auto;
+    margin-right: 0;
+}
