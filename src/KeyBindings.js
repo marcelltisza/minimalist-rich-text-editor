@@ -12,7 +12,9 @@ function getKeyBindings(editorState, setEditorState, setSearchVisibility) {
   function myKeyBindingFn(e) {
     if (e.key === 's' && KeyBindingUtil.hasCommandModifier(e)) {
       return COMMAND.SAVE;
-    } else if (e.keyCode === 32) {
+    }
+
+    if (e.keyCode === 32) {
       const selection = editorState.getSelection();
       const text = editorState
         .getCurrentContent()
@@ -25,17 +27,24 @@ function getKeyBindings(editorState, setEditorState, setSearchVisibility) {
       } else {
         return getDefaultKeyBinding(e);
       }
-    } else if (e.key === 'k' && KeyBindingUtil.hasCommandModifier(e)) {
+    }
+
+    if (e.key === 'k' && KeyBindingUtil.hasCommandModifier(e)) {
       return COMMAND.ENTITY;
-    } else if (e.key === 'f' && KeyBindingUtil.hasCommandModifier(e)) {
+    }
+
+    if (e.key === 'f' && KeyBindingUtil.hasCommandModifier(e)) {
       e.preventDefault();
       return COMMAND.FIND;
-    } else if (e.keyCode === 9) {
+    }
+
+    if (e.keyCode === 9) {
       e.preventDefault();
       const newState = RichUtils.onTab(e, editorState, 4);
       setEditorState(newState);
       return COMMAND.TAB;
     }
+
     return getDefaultKeyBinding(e);
   }
 

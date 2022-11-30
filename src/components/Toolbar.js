@@ -41,7 +41,6 @@ function Toolbar({ editorState, setEditorState }) {
       <span className='toolbar-group'>
         <ToggleButton
           onClick={(e) => {
-            e.preventDefault();
             toggleInlineStyle(INLINE_STYLE.BOLD);
           }}
           active={stylesAtCursor && stylesAtCursor.includes(INLINE_STYLE.BOLD)}

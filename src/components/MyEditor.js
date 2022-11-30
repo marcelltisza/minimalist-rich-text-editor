@@ -50,7 +50,7 @@ function MyEditor() {
     setEditorState(
       EditorState.forceSelection(
         EditorState.set(editorState, {
-          decorator: CustomEntityDecorator,
+          decorator: LinkDecorator,
         }),
         editorState.getSelection()
       )

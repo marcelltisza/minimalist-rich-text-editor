@@ -7,6 +7,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/draft-js": "^0.11.9",
+    "axios": "^1.2.0",
     "draft-js": "^0.11.7",
     "es6-shim": "^0.35.6",
     "fs-react": "^0.0.4",
