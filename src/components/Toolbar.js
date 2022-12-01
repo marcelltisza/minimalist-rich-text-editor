@@ -24,12 +24,6 @@ function Toolbar({ editorState, setEditorState }) {
     setCurrentBlockType(type);
   }, [editorState]);
 
-  function toggleInlineStyle(style) {
-    setEditorState((editorState) =>
-      RichUtils.toggleInlineStyle(editorState, style)
-    );
-  }
-
   function toggleBlockType(type) {
     setEditorState((editorState) =>
       RichUtils.toggleBlockType(editorState, type)
@@ -38,33 +32,51 @@ function Toolbar({ editorState, setEditorState }) {
 
   return (
     <div className='toolbar'>
+      {/* INLINE_STYLES */}
       <span className='toolbar-group'>
+        {/* BOLD */}
         <ToggleButton
-          onClick={(e) => {
-            toggleInlineStyle(INLINE_STYLE.BOLD);
+          onClick={() => {
+            setEditorState((editorState) =>
+              RichUtils.toggleInlineStyle(editorState, INLINE_STYLE.BOLD)
+            );
           }}
           active={stylesAtCursor && stylesAtCursor.includes(INLINE_STYLE.BOLD)}
         >
           <i className='fa-solid fa-bold'></i>
         </ToggleButton>
+
+        {/* ITALIC */}
         <ToggleButton
-          onClick={() => toggleInlineStyle(INLINE_STYLE.ITALIC)}
+          onClick={() =>
+            setEditorState((editorState) =>
+              RichUtils.toggleInlineStyle(editorState, INLINE_STYLE.ITALIC)
+            )
+          }
           active={
             stylesAtCursor && stylesAtCursor.includes(INLINE_STYLE.ITALIC)
           }
         >
           <i className='fa-solid fa-italic'></i>
         </ToggleButton>
+
+        {/* UNDERLINE */}
         <ToggleButton
-          onClick={() => toggleInlineStyle(INLINE_STYLE.UNDERLINE)}
+          onClick={() =>
+            setEditorState((editorState) =>
+              RichUtils.toggleInlineStyle(editorState, INLINE_STYLE.UNDERLINE)
+            )
+          }
           active={
             stylesAtCursor && stylesAtCursor.includes(INLINE_STYLE.UNDERLINE)
           }
         >
           <i className='fa-solid fa-underline'></i>
         </ToggleButton>
+
+        {/* STRIKETHROUGHT */}
         <ToggleButton
-          onClick={() => toggleInlineStyle(INLINE_STYLE.STRIKETHROUGH)}
+          onClick={() => {}}
           active={
             stylesAtCursor &&
             stylesAtCursor.includes(INLINE_STYLE.STRIKETHROUGH)
@@ -72,8 +84,10 @@ function Toolbar({ editorState, setEditorState }) {
         >
           <i className='fa-solid fa-strikethrough'></i>
         </ToggleButton>
+
+        {/* HIGHLIGHT */}
         <ToggleButton
-          onClick={() => toggleInlineStyle(INLINE_STYLE.HIGHLIGHT)}
+          onClick={() => {}}
           active={
             stylesAtCursor && stylesAtCursor.includes(INLINE_STYLE.HIGHLIGHT)
           }
@@ -81,6 +95,8 @@ function Toolbar({ editorState, setEditorState }) {
           <i className='fa-solid fa-highlighter'></i>
         </ToggleButton>
       </span>
+
+      {/* HEADERS */}
       <span className='toolbar-group'>
         <ToggleButton
           onClick={() => toggleBlockType(BLOCK_TYPE.HEADER_ONE)}
@@ -113,20 +129,27 @@ function Toolbar({ editorState, setEditorState }) {
           H5
         </ToggleButton>
       </span>
+
+      {/* LISTS */}
       <span className='toolbar-group'>
+        {/* UNORDERED */}
         <ToggleButton
-          onClick={() => toggleBlockType(BLOCK_TYPE.UNORDERED_LIST_ITEM)}
+          onClick={() => {}}
           active={currentBlockType === BLOCK_TYPE.UNORDERED_LIST_ITEM}
         >
           <i className='fa-solid fa-list'></i>
         </ToggleButton>
+
+        {/* ORDERED */}
         <ToggleButton
-          onClick={() => toggleBlockType(BLOCK_TYPE.ORDERED_LIST_ITEM)}
+          onClick={() => {}}
           active={currentBlockType === BLOCK_TYPE.ORDERED_LIST_ITEM}
         >
           <i className='fa-solid fa-list-ol'></i>
         </ToggleButton>
       </span>
+
+      {/* UNDO_REDO */}
       <span className='toolbar-group'>
         <button
           className='button'
@@ -145,6 +168,8 @@ function Toolbar({ editorState, setEditorState }) {
           <i className='fa-solid fa-arrow-rotate-right'></i>
         </button>
       </span>
+
+      {/* SAVE */}
       <button
         className='button save'
         onClick={() => saveEditorState(editorState)}
