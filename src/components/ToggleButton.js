@@ -3,7 +3,10 @@ import '../styles/ToggleButton.css';
 function ToggleButton({ onClick, active, children }) {
   return (
     <button
-      onClick={() => onClick()}
+      onMouseDown={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
       className={`button ${active ? 'button-active' : 'button-inactive'}`}
     >
       {children}

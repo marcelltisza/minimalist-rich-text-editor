@@ -15,7 +15,13 @@ function Toolbar({ editorState, setEditorState }) {
       .getCurrentContent()
       .getBlockForKey(selection.getStartKey())
       .getInlineStyleAt(selection.getStartOffset() - 1);
-    setStylesAtCursor(styles);
+    const overrides = editorState.getInlineStyleOverride();
+
+    if (overrides) {
+      setStylesAtCursor(overrides);
+    } else {
+      setStylesAtCursor(styles);
+    }
 
     const type = editorState
       .getCurrentContent()
@@ -172,7 +178,10 @@ function Toolbar({ editorState, setEditorState }) {
       {/* SAVE */}
       <button
         className='button save'
-        onClick={() => saveEditorState(editorState)}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          saveEditorState(editorState);
+        }}
       >
         <i className='fa-solid fa-floppy-disk'></i>
       </button>
