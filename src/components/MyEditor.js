@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   CompositeDecorator,
+  SelectionState,
   Editor,
   EditorState,
   getDefaultKeyBinding,
@@ -26,12 +27,15 @@ function MyEditor() {
 
     // setEditorState(EditorState.set(editorState, { decorator: decorators }));
 
-    const contentStateWithEntity = contentState.createEntity(
-      "TOKEN",
-      "IMMUTABLE",
-      Math.random()
+    setEditorState(
+      EditorState.forceSelection(
+        EditorState.set(editorState, { decorator: decorators }),
+        editorState.getSelection()
+      )
     );
+  }, []);
 
+  useEffect(() => {
     editorState
       .getCurrentContent()
       .getBlockMap()
@@ -45,29 +49,30 @@ function MyEditor() {
           callback(start, end, block);
         }
       });
-
-    setEditorState(
-      EditorState.forceSelection(
-        EditorState.set(editorState, { decorator: decorators }),
-        editorState.getSelection()
-      )
-    );
-  }, []);
+  }, [editorState]);
 
   function callback(start, end, block) {
-    const selectionState
+    const selectionState = SelectionState.createEmpty(block).merge({
+      anchorOffset: start,
+      focusOffset: end,
+    });
     const contentState = editorState.getCurrentContent();
     const contentStateWithEntity = contentState.createEntity(
-      "TOKEN",
+      "LINK",
       "IMMUTABLE",
-      Math.random()
+      block.getText().slice(start, end + 1)
     );
+
     const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
 
     const contentStateWithToken = Modifier.applyEntity(
       contentStateWithEntity,
       selectionState,
       entityKey
+    );
+
+    setEditorState(
+      EditorState.set(editorState, { currentContent: contentStateWithToken })
     );
   }
 
