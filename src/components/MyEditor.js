@@ -39,9 +39,9 @@ function MyEditor() {
     editorState
       .getCurrentContent()
       .getBlockMap()
-      .forEach((block) => {
+      .map((block) => {
         const text = block.getText();
-        const regex = /(https?:\/\/)?www\.(\w+\.)+(com|hu|org)/gi;
+        const regex = /(https?:\/\/)?www\.(?<shortLink>(\w+))\.(com|hu|org)/gi;
         let match;
         while ((match = regex.exec(text))) {
           let start = match.index;
@@ -56,18 +56,37 @@ function MyEditor() {
       anchorOffset: start,
       focusOffset: end,
     });
-    const contentState = editorState.getCurrentContent();
-    const contentStateWithEntity = contentState.createEntity(
+    let contentState = editorState.getCurrentContent();
+
+    const oldText = block.getText().slice(start, end + 1);
+
+    const replace = "valami";
+    console.log(contentState);
+    console.log(selectionState);
+    const newContentState = Modifier.replaceText(
+      contentState,
+      selectionState,
+      replace
+    );
+
+    const contentStateWithEntity = newContentState.createEntity(
       "LINK",
       "IMMUTABLE",
-      block.getText().slice(start, end + 1)
+      oldText
     );
+
+    // return EditorState.push(editorState, currentContent);
 
     const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
 
+    const newSelectionState = SelectionState.createEmpty(block).merge({
+      anchorOffset: start,
+      focusOffset: replace.length + 1,
+    });
+
     const contentStateWithToken = Modifier.applyEntity(
       contentStateWithEntity,
-      selectionState,
+      newSelectionState,
       entityKey
     );
 
