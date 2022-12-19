@@ -46,13 +46,13 @@ function MyEditor() {
         while ((match = regex.exec(text))) {
           let start = match.index;
           let end = start + match[0].length;
-          callback(start, end, block);
+          callback(start, end, block, match);
         }
       });
   }, [editorState]);
 
-  function callback(start, end, block) {
-    const selectionState = SelectionState.createEmpty(block).merge({
+  function callback(start, end, block, match) {
+    const selectionState = SelectionState.createEmpty(block.getKey()).merge({
       anchorOffset: start,
       focusOffset: end,
     });
@@ -60,9 +60,7 @@ function MyEditor() {
 
     const oldText = block.getText().slice(start, end + 1);
 
-    const replace = "valami";
-    console.log(contentState);
-    console.log(selectionState);
+    const replace = match.groups.shortLink;
     const newContentState = Modifier.replaceText(
       contentState,
       selectionState,
@@ -79,9 +77,9 @@ function MyEditor() {
 
     const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
 
-    const newSelectionState = SelectionState.createEmpty(block).merge({
+    const newSelectionState = SelectionState.createEmpty(block.getKey()).merge({
       anchorOffset: start,
-      focusOffset: replace.length + 1,
+      focusOffset: replace.length,
     });
 
     const contentStateWithToken = Modifier.applyEntity(
@@ -89,9 +87,15 @@ function MyEditor() {
       newSelectionState,
       entityKey
     );
-
+    const merge = newSelectionState.merge({
+      anchorOffset: newSelectionState.focusOffset,
+      focusOffset: newSelectionState.focusOffset,
+    });
     setEditorState(
-      EditorState.set(editorState, { currentContent: contentStateWithToken })
+      EditorState.forceSelection(
+        EditorState.set(editorState, { currentContent: contentStateWithToken }),
+        newSelectionState.merge(merge)
+      )
     );
   }
 
@@ -158,35 +162,6 @@ function MyEditor() {
     return COMMAND.NOT_HANDLED;
   };
 
-  // function stringifyEvent(e) {
-  //   const obj = {};
-  //   for (let k in e) {
-  //     obj[k] = e[k];
-  //   }
-  //   return JSON.stringify(
-  //     obj,
-  //     (k, v) => {
-  //       if (v instanceof Node) return "Node";
-  //       if (v instanceof Window) return "Window";
-  //       return v;
-  //     },
-  //     " "
-  //   );
-  // }
-
-  // const handleKeyCommandModified = (command, editorState) => {
-  //   const commandArray = command.split(";");
-  //   const realCommand = commandArray[0];
-  //   console.log(realCommand);
-  //   console.log(commandArray[1]);
-  //   console.log(commandArray[2]);
-  //   if (realCommand === COMMAND.TAB) {
-  //     const event = JSON.parse(commandArray[1]);
-  //     setEditorState(RichUtils.onTab(event, editorState, 4));
-  //     return COMMAND.HANDLED;
-  //   }
-  // };
-
   const linkDecorator = {
     strategy: (contentBlock, callback) => {
       const text = contentBlock.getText();
@@ -210,23 +185,29 @@ function MyEditor() {
     },
   };
 
-  const entityDecorator = {
+  const linkEntityDecorator = {
     strategy: (contentBlock, callback, contentState) => {
       contentBlock.findEntityRanges((character) => {
         const entityKey = character.getEntity();
         return (
           entityKey !== null &&
-          contentState.getEntity(entityKey).getType() === "TOKEN"
+          contentState.getEntity(entityKey).getType() === "LINK"
         );
       }, callback);
     },
     component: (props) => {
-      console.log("lefutott az entity");
-      return <span className="custom-entity">[{props.children}]</span>;
+      let url = props.contentState.getEntity(props.entityKey).getData();
+      url = url.startsWith("http") ? url : `http://${url}`;
+      // return <span className="custom-entity">[{props.children}]</span>;
+      return (
+        <a href={url} onClick={() => window.open(url)}>
+          {props.children}
+        </a>
+      );
     },
   };
 
-  const decorators = new CompositeDecorator([linkDecorator, entityDecorator]);
+  const decorators = new CompositeDecorator([linkEntityDecorator]);
 
   return (
     <div className="editor-container">
